@@ -1,0 +1,21 @@
+{
+  "name": "nodeurlshortner",
+  "version": "1.0.0",
+  "description": "Simple URL shortner",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "node app",
+    "ser": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oneofthedevs/NodeURLShortner.git"
+  },
+  "author": "oneofthedevs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oneofthedevs/NodeURLShortner/issues"
+  },
+  "homepage": "https://github.com/oneofthedevs/NodeURLShortner#readme"
+}
