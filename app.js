@@ -6,6 +6,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 // Internal
+const urlController = require("./controller/url");
 
 // Middlewares
 const app = express();
@@ -26,6 +27,11 @@ mongoose.connect(
 );
 
 // Code
+app.get("/getAll", urlController.getAllUrls);
+app.post("/generateURL", urlController.generateUrl);
+app.get("/:id", urlController.getOriginalURL);
+app.get(urlController.invalidURL);
+
 // Listen
 app.listen(process.env.PORT, () => {
   console.log("Running on Port: " + process.env.PORT);

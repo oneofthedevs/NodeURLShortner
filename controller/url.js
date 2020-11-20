@@ -25,10 +25,11 @@ const getOriginalURL = async (req, res) => {
   try {
     const id = req.params.id;
     const response = await FindUrlByShortId(id);
-    if (!response) {
-      return res
-        .status(200)
-        .json({ status: 200, response: { originalUrl: response.originalUrl } });
+    if (response) {
+      return res.status(200).json({
+        status: 200,
+        response: response,
+      });
     }
     res.redirect(response.originalUrl);
   } catch (err) {
@@ -45,10 +46,14 @@ const getAllUrls = async (req, res) => {
   }
 };
 
+const invalidURL = (req, res) => {
+  res.status(400).json({ status: 400, response: { message: "Bad Request" } });
+};
+
 // Internal methods
 const FindUrlByShortId = async (id) => {
   try {
-    const obj = await itemModel.item.find({ shortId: id });
+    const obj = await itemModel.item.findOne({ shortId: id });
     if (obj) {
       return obj;
     }
@@ -78,4 +83,5 @@ module.exports = {
   generateUrl,
   getAllUrls,
   getOriginalURL,
+  invalidURL,
 };
