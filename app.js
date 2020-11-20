@@ -29,8 +29,8 @@ mongoose.connect(
 // Code
 app.get("/getAll", urlController.getAllUrls);
 app.post("/generateURL", urlController.generateUrl);
-app.get("/:id", urlController.getOriginalURL);
-app.get(urlController.invalidURL);
+app.get("/:shortId", urlController.getOriginalURL);
+app.use(urlController.invalidURL);
 
 // Listen
 app.listen(process.env.PORT, () => {

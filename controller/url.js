@@ -1,5 +1,6 @@
 // Imports
 const itemModel = require("../models/urlModel");
+const validUrl = require("valid-url");
 
 // Code
 const generateUrl = async (req, res) => {
@@ -8,23 +9,36 @@ const generateUrl = async (req, res) => {
     // if (!FindUrlByURL(url)) {
     let randomString = randomStringGenerator();
     let model = new itemModel.item({
-      originalUrl: url,
+      longUrl: url,
       shortId: randomString,
-      url: `URL+${randomString}`,
+      shortUrl: `${process.env.BASE_URL}/${randomString}`,
     });
+    if (!validUrl.isUri(process.env.BASE_URL)) {
+      return res.status(401).json({
+        status: 401,
+        response: { message: "Internal error. Please come back later." },
+      });
+    }
     const response = await model.save();
     res.status(201).json({ status: 201, response: response });
-    // }
-    // res
-    //   .status(400)
-    //   .json({ status: 400, response: { message: "URL already exist" } });
   } catch (err) {}
 };
 
 const getOriginalURL = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.shortId;
     const response = await FindUrlByShortId(id);
+    // response.clickCount++;
+    // response.s
+    // await response.updateOne(
+    //   { shortId: shortId },
+    //   {
+    //     longUrl: response.longUrl,
+    //     shortId: response.shortId,
+    //     shortUrl: response.shortUrl,
+    //     clickCount: response.clickCount++,
+    //   }
+    // );
     if (response) {
       return res.status(200).json({
         status: 200,
