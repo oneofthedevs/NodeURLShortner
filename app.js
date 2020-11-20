@@ -5,6 +5,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 
+// CONNECTION_STRING=mongodb+srv://oneofthedevs:$LetMeIn!@urlshortner.m8chg.mongodb.net/URLShortner?retryWrites=true&w=majority
+// PORT=5000
+// BASE_URL=http://localhost:5000
+
 // Internal
 const urlController = require("./controller/url");
 

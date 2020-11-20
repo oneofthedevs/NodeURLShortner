@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node app",
-    "ser": "nodemon app"
+    "ser": "npx nodemon app",
+    "debug": "npx nodemon --inspect app"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/oneofthedevs/NodeURLShortner#readme",
   "dependencies": {
+    "@supercharge/request-ip": "^1.1.2",
     "body-parser": "^1.19.0",
     "config": "^3.3.2",
     "cors": "^2.8.5",

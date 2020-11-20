@@ -23,8 +23,20 @@ const itemSchema = mongoose.Schema({
   },
 });
 
-const item = mongoose.model("Item", itemSchema);
+const analyticsSchema = mongoose.Schema({
+  // ID of the Object
+  urlId: {
+    type: String,
+    require: true,
+  },
+  data: [],
+});
 
+const item = mongoose.model("UrlWarehouse", itemSchema);
+const analytics = mongoose.model("Analytics", analyticsSchema);
+
+// Exports
 module.exports = {
   item,
+  analytics,
 };

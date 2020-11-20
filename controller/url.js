@@ -5,47 +5,38 @@ const validUrl = require("valid-url");
 // Code
 const generateUrl = async (req, res) => {
   try {
-    const url = req.body.url;
     // if (!FindUrlByURL(url)) {
-    let randomString = randomStringGenerator();
     let model = new itemModel.item({
-      longUrl: url,
-      shortId: randomString,
+      longUrl: req.body.url,
+      shortId: randomStringGenerator(),
       shortUrl: `${process.env.BASE_URL}/${randomString}`,
     });
-    if (!validUrl.isUri(process.env.BASE_URL)) {
-      return res.status(401).json({
-        status: 401,
-        response: { message: "Internal error. Please come back later." },
-      });
-    }
-    const response = await model.save();
-    res.status(201).json({ status: 201, response: response });
+    return !validUrl.isUri(process.env.BASE_URL)
+      ? res.status(401).json({
+          status: 401,
+          response: { message: "Internal error. Please come back later." },
+        })
+      : res.status(201).json({ status: 201, response: await model.save() });
   } catch (err) {}
 };
 
 const getOriginalURL = async (req, res) => {
   try {
     const id = req.params.shortId;
-    const response = await FindUrlByShortId(id);
-    // response.clickCount++;
-    // response.s
-    // await response.updateOne(
-    //   { shortId: shortId },
-    //   {
-    //     longUrl: response.longUrl,
-    //     shortId: response.shortId,
-    //     shortUrl: response.shortUrl,
-    //     clickCount: response.clickCount++,
-    //   }
-    // );
-    if (response) {
-      return res.status(200).json({
-        status: 200,
-        response: response,
-      });
-    }
-    res.redirect(response.originalUrl);
+    const obj = await FindUrlByShortId(id);
+
+    let clickCount = obj.clickCount;
+    clickCount++;
+    await obj.update({ clickCount });
+    // await obj.save();
+
+    return obj
+      ? res.redirect(obj.longUrl)
+      : res
+          .status(400)
+          .json({ status: 400, response: { message: "URL not found" } });
+
+    // res.redirect(response.originalUrl);
   } catch (err) {
     res.status(500).json({ status: 500, response: err });
   }
@@ -53,8 +44,9 @@ const getOriginalURL = async (req, res) => {
 
 const getAllUrls = async (req, res) => {
   try {
-    const response = await itemModel.item.find();
-    res.status(200).json({ status: 200, response: response });
+    res
+      .status(200)
+      .json({ status: 200, response: await itemModel.item.find() });
   } catch (err) {
     res.status(500).json({ status: 500, response: err });
   }
@@ -67,11 +59,7 @@ const invalidURL = (req, res) => {
 // Internal methods
 const FindUrlByShortId = async (id) => {
   try {
-    const obj = await itemModel.item.findOne({ shortId: id });
-    if (obj) {
-      return obj;
-    }
-    return false;
+    return (await itemModel.item.findOne({ shortId: id })) || false;
   } catch (err) {
     console.log(err);
   }
@@ -79,11 +67,7 @@ const FindUrlByShortId = async (id) => {
 
 const FindUrlByURL = async (url) => {
   try {
-    const obj = itemModel.item.find({ url: url });
-    if (obj) {
-      return obj;
-    }
-    return false;
+    return itemModel.item.find({ url: url }) || false;
   } catch (err) {
     console.log(err);
   }
