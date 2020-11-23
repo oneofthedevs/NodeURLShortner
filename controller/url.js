@@ -6,10 +6,11 @@ const validUrl = require("valid-url");
 const generateUrl = async (req, res) => {
   try {
     // if (!FindUrlByURL(url)) {
+    const shortUrl = randomStringGenerator();
     let model = new itemModel.item({
       longUrl: req.body.url,
-      shortId: randomStringGenerator(),
-      shortUrl: `${process.env.BASE_URL}/${randomString}`,
+      shortId: shortUrl,
+      shortUrl: `${process.env.BASE_URL}/${shortUrl}`,
     });
     return !validUrl.isUri(process.env.BASE_URL)
       ? res.status(401).json({
@@ -28,7 +29,14 @@ const getOriginalURL = async (req, res) => {
     let clickCount = obj.clickCount;
     clickCount++;
     await obj.update({ clickCount });
-    // await obj.save();
+
+    const analyticsObj = new itemModel.analytics({
+      urlId: obj._id,
+      ip: req.ip,
+      dateTime: Date.now(),
+    });
+
+    await analyticsObj.save();
 
     return obj
       ? res.redirect(obj.longUrl)
@@ -44,6 +52,7 @@ const getOriginalURL = async (req, res) => {
 
 const getAllUrls = async (req, res) => {
   try {
+    console.log(req.ip);
     res
       .status(200)
       .json({ status: 200, response: await itemModel.item.find() });

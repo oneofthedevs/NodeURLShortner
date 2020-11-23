@@ -29,10 +29,17 @@ const analyticsSchema = mongoose.Schema({
     type: String,
     require: true,
   },
-  data: [],
+  ip: {
+    type: String,
+    require: false,
+  },
+  dateTime: {
+    type: String,
+    require: true,
+  },
 });
 
-const item = mongoose.model("UrlWarehouse", itemSchema);
+const item = mongoose.model("Items", itemSchema);
 const analytics = mongoose.model("Analytics", analyticsSchema);
 
 // Exports
