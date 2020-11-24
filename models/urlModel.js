@@ -26,8 +26,9 @@ const itemSchema = mongoose.Schema({
 const analyticsSchema = mongoose.Schema({
   // ID of the Object
   urlId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     require: true,
+    ref: "Items",
   },
   ip: {
     type: String,

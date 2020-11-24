@@ -1,24 +1,28 @@
 // Imports
 const itemModel = require("../models/urlModel");
 const validUrl = require("valid-url");
+ObjectId = require("mongodb").ObjectID;
 
 // Code
 const generateUrl = async (req, res) => {
   try {
-    // if (!FindUrlByURL(url)) {
     const shortUrl = randomStringGenerator();
     let model = new itemModel.item({
       longUrl: req.body.url,
       shortId: shortUrl,
       shortUrl: `${process.env.BASE_URL}/${shortUrl}`,
     });
-    return !validUrl.isUri(process.env.BASE_URL)
-      ? res.status(401).json({
-          status: 401,
-          response: { message: "Internal error. Please come back later." },
+    return !validUrl.isUri(req.body.url)
+      ? res.status(400).json({
+          status: 400,
+          response: { message: "Please enter valid URL" },
         })
       : res.status(201).json({ status: 201, response: await model.save() });
-  } catch (err) {}
+  } catch (err) {
+    res
+      .status(500)
+      .json({ status: 500, response: { message: "Internal sever error" } });
+  }
 };
 
 const getOriginalURL = async (req, res) => {
@@ -26,25 +30,24 @@ const getOriginalURL = async (req, res) => {
     const id = req.params.shortId;
     const obj = await FindUrlByShortId(id);
 
-    let clickCount = obj.clickCount;
-    clickCount++;
-    await obj.update({ clickCount });
+    if (obj) {
+      let clickCount = obj.clickCount;
+      clickCount++;
+      await obj.update({ clickCount });
 
-    const analyticsObj = new itemModel.analytics({
-      urlId: obj._id,
-      ip: req.ip,
-      dateTime: Date.now(),
-    });
+      const analyticsObj = new itemModel.analytics({
+        urlId: new ObjectId(obj._id),
+        ip: req.ip,
+        dateTime: Date.now(),
+      });
 
-    await analyticsObj.save();
+      await analyticsObj.save();
 
-    return obj
-      ? res.redirect(obj.longUrl)
-      : res
-          .status(400)
-          .json({ status: 400, response: { message: "URL not found" } });
-
-    // res.redirect(response.originalUrl);
+      return res.redirect(obj.longUrl);
+    } else
+      res
+        .status(400)
+        .json({ status: 400, response: { message: "URL not found" } });
   } catch (err) {
     res.status(500).json({ status: 500, response: err });
   }
@@ -52,10 +55,10 @@ const getOriginalURL = async (req, res) => {
 
 const getAllUrls = async (req, res) => {
   try {
-    console.log(req.ip);
-    res
-      .status(200)
-      .json({ status: 200, response: await itemModel.item.find() });
+    res.status(200).json({
+      status: 200,
+      response: await itemModel.item.find().select("-__v -_id"),
+    });
   } catch (err) {
     res.status(500).json({ status: 500, response: err });
   }

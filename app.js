@@ -11,6 +11,7 @@ require("dotenv").config();
 
 // Internal
 const urlController = require("./controller/url");
+const analyticsController = require("./controller/analytics");
 
 // Middlewares
 const app = express();
@@ -34,6 +35,7 @@ mongoose.connect(
 app.get("/getAll", urlController.getAllUrls);
 app.post("/generateURL", urlController.generateUrl);
 app.get("/:shortId", urlController.getOriginalURL);
+app.post("/analytics", analyticsController.getAnalyticsgetAnalytics);
 app.use(urlController.invalidURL);
 
 // Listen
