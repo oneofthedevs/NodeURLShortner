@@ -10,7 +10,7 @@ const generateUrl = async (req, res) => {
     let model = new itemModel.item({
       longUrl: req.body.url,
       shortId: shortUrl,
-      shortUrl: `${process.env.BASE_URL}/${shortUrl}`,
+      shortUrl: `${req.protocol}://${req.get("host")}/${shortUrl}`,
     });
     return !validUrl.isUri(req.body.url)
       ? res.status(400).json({

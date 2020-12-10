@@ -30,7 +30,7 @@ const fetchAnalytics = async (id) => {
   try {
     const arr = await itemModel.analytics
       .find({ urlId: id })
-      .select("-_id -__v -urlId");
+      .select("dateTime -_id");
     // .populate("urlId", "clickCount -_id");
 
     return arr ? arr : null;

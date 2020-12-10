@@ -4,10 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
-
-// CONNECTION_STRING=mongodb+srv://oneofthedevs:$LetMeIn!@urlshortner.m8chg.mongodb.net/URLShortner?retryWrites=true&w=majority
-// PORT=5000
-// BASE_URL=http://localhost:5000
+const http = require("http");
 
 // Internal
 const urlController = require("./controller/url");
@@ -17,6 +14,14 @@ const analyticsController = require("./controller/analytics");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  // http.get(() => {
+  //   console.log(res);
+  // });
+  console.log();
+  next();
+});
 
 // Connection
 mongoose.connect(
@@ -39,6 +44,6 @@ app.post("/analytics", analyticsController.getAnalyticsgetAnalytics);
 app.use(urlController.invalidURL);
 
 // Listen
-app.listen(process.env.PORT, () => {
-  console.log("Running on Port: " + process.env.PORT);
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Running on Port: " + (process.env.PORT || 3000));
 });
